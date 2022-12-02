@@ -1,0 +1,41 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxc.enterprisestaffmanagement.mapper.ScheduleMapper">
+    <resultMap id="scheduleMap" type="Schedule" autoMapping="true">
+        <id column="s_id" property="s_id"></id>
+        <association property="department" resultMap="departmentMap"></association>
+    </resultMap>
+    <resultMap id="departmentMap" type="Department" autoMapping="true">
+        <id property="de_id" column="s_department_id"></id>
+    </resultMap>
+    <insert id="addSchedule" parameterType="Schedule">
+        insert into schedule values (#{s_id},#{department.de_id},#{s_date},#{s_name});
+    </insert>
+    <update id="updateSchedule" parameterType="Schedule">
+        update schedule set s_department_id=#{department.de_id},s_date=#{s_date},s_name=#{s_name} where s_id=#{s_id}
+    </update>
+    <delete id="deleteSchedule" parameterType="int">
+        delete from schedule where s_id=#{s_id}
+    </delete>
+    <select id="queryAllSchedules" resultMap="scheduleMap">
+        select s.s_id,s.s_name,s.s_date,d.de_name from schedule s,department d where s.s_department_id = d.de_id order by s.s_id desc
+    </select>
+    <select id="queryScheduleById" resultMap="scheduleMap" parameterType="int">
+        select s.s_id,s.s_name,s.s_date,d.de_name from schedule s,department d where s.s_department_id = d.de_id and s.s_id=#{s_id}
+    </select>
+    <select id="querySchedules" parameterType="String" resultMap="scheduleMap">
+        select s.s_id,s.s_name,s.s_date,d.de_name from schedule s,department d
+        <where>
+            s.s_department_id = d.de_id
+            <if test="s_name!=null and s_name!=''">
+                and s.s_name like concat("%",#{s_name},"%")
+            </if>
+        </where>
+        order by s.s_id desc
+    </select>
+    
+    <delete id="deleteScheduleByDe_id" parameterType="int">
+        delete from schedule where s_department_id=#{s_department_id}
+    </delete>
+</mapper>

@@ -1,0 +1,39 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxc.enterprisestaffmanagement.mapper.DepartmentMapper">
+    <!--<resultMap id="departmentMap" type="department" autoMapping="true">
+        <id property="de_id" column="de_id"></id>
+        <collection property="staff" resultMap="staffMap"></collection>
+    </resultMap>-->
+    <!--<resultMap id="staffMap" type="staff" autoMapping="true">
+        <id column="staff_id" property="staff_id"></id>
+    </resultMap>-->
+    <insert id="addDepartment" parameterType="Department">
+        insert into department values (#{de_id},#{de_name},#{de_belong_id});
+    </insert>
+    <update id="updateDepartment" parameterType="Department">
+        update department set de_name=#{de_name},de_belong_id=#{de_belong_id} where de_id=#{de_id}
+    </update>
+    <select id="queryAllDepartments" resultType="Department">
+        select * from department where de_id != 0 order by de_id desc
+    </select>
+    <select id="queryDepartmentById" parameterType="int" resultType="Department">
+        select * from department where de_id=#{de_id}
+    </select>
+    <select id="queryDepartmentByName" parameterType="String" resultType="Department">
+        select * from department
+        <where>
+        <if test="de_name!=null and de_name != ''">
+            and de_name like concat("%",#{de_name},"%")
+        </if>
+
+        </where>
+        order by de_id desc
+
+    </select>
+    <delete id="deleteDepartment" parameterType="int">
+        delete from department where de_id=#{de_id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,44 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxc.enterprisestaffmanagement.mapper.StaffMapper">
+    <resultMap id="staffMap" type="Staff" autoMapping="true">
+        <id property="staff_id" column="staff_id"></id>
+        <association property="position" resultMap="positionMap">
+            <result column="staff_position" property="position_id"></result>
+        </association>
+    </resultMap>
+    <resultMap id="positionMap" type="Position" autoMapping="true">
+        <id column="staff_position" property="position_id"></id>
+    </resultMap>
+    <insert id="addStaff" parameterType="Staff">
+        insert into staff values (#{staff_id},#{staff_name},#{staff_sex},#{position.position_id},#{staff_date},#{staff_wage});
+    </insert>
+    <update id="updateStaff" parameterType="Staff">
+        update staff set staff_name=#{staff_name},staff_sex=#{staff_sex},staff_date=#{staff_date},staff_position=#{position.position_id},staff_wage=#{staff_wage} where staff_id=#{staff_id}
+    </update>
+    <delete id="deleteStaff" parameterType="int">
+        delete from staff where staff_id=#{staff_id}
+    </delete>
+
+    <select id="queryStaffById" parameterType="int" resultMap="staffMap">
+        select s.staff_id,s.staff_name,s.staff_sex,p.position_name,s.staff_date,s.staff_wage from staff s,position p where s.staff_id=#{staff_id} and s.staff_position=p.position_id
+    </select>
+    <select id="queryAllStaffs" resultMap="staffMap">
+        SELECT s.staff_id,s.staff_name,s.staff_sex,p.position_name,s.staff_date,s.staff_wage FROM staff s,POSITION p WHERE s.staff_position=p.position_id  ORDER BY staff_id DESC
+    </select>
+    <select id="queryStaffByName" parameterType="String" resultMap="staffMap">
+        select s.staff_id, s.staff_name,s.staff_sex,p.position_name,s.staff_date,s.staff_wage FROM staff s,POSITION p
+        <where>
+            s.staff_position=p.position_id
+            <if test="staff_name!=null and staff_name!= ''">
+                and s.staff_name like concat("%",#{staff_name},"%")
+            </if>
+        </where>
+        order by s.staff_id desc
+    </select>
+    <delete id="deleteStaffByPosition_id" parameterType="int">
+        delete from staff where staff_position = #{staff_position}
+    </delete>
+
+</mapper>

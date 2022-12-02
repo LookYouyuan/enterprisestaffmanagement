@@ -1,0 +1,43 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxc.enterprisestaffmanagement.mapper.PositionMapper">
+    <resultMap id="positionMap" type="Position" autoMapping="true">
+        <id property="position_id" column="position_id"></id>
+        <association property="department" resultMap="departmentMap"></association>
+    </resultMap>
+    <resultMap id="departmentMap" type="Department" autoMapping="true">
+        <id column="position_de_id" property="de_id"></id>
+    </resultMap>
+    <insert id="addPosition" parameterType="Position">
+        insert into position values (#{position_id},#{position_name},#{department.de_id})
+    </insert>
+    <update id="updatePosition" parameterType="Position">
+        update position set position_name=#{position_name},position_de_id=#{department.de_id} where position_id=#{position_id}
+    </update>
+    <select id="queryPositionById" resultMap="positionMap" parameterType="int" >
+        select p.position_id,d.de_name,p.position_name from department d,position p where d.de_id=p.position_de_id and p.position_id=#{position_id}
+    </select>
+    <select id="queryPositionByName" parameterType="String" resultMap="positionMap">
+        select d.de_id, d.de_name,p.position_name from department d,position p
+        <where>
+            p.position_de_id = d.de_id
+            <if test="position_name!=null and position_name != ''">
+                and p.position_name like concat("%",#{position_name},"%")
+            </if>
+        </where>
+        order by p.position_id desc
+    </select>
+    <select id="queryAllPositions" parameterType="Position" resultMap="positionMap">
+        select d.de_name,p.position_name,p.position_id from department d,position p where d.de_id=p.position_de_id order by p.position_id desc
+    </select>
+    <delete id="deletePosition" parameterType="int">
+        delete from position where position_id=#{position_id}
+    </delete>
+    <delete id="deletePositionByDe_id" parameterType="int">
+
+        delete from position where position_de_id = ${position_de_id};
+
+    </delete>
+
+</mapper>

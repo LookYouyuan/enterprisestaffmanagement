@@ -1,0 +1,42 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxc.enterprisestaffmanagement.mapper.ProjectMapper">
+    <resultMap id="projectMap" type="Project" autoMapping="true">
+        <id column="p_id" property="p_id"></id>
+        <association property="department" resultMap="departmentMap"></association>
+    </resultMap>
+    <resultMap id="departmentMap" type="Department" autoMapping="true">
+        <id property="de_id" column="p_department_id"></id>
+    </resultMap>
+    <insert id="addProject" parameterType="Project">
+        insert into project values (#{p_id},#{p_name},#{department.de_id},#{p_begin},#{p_end})
+    </insert>
+    <update id="updateProject" parameterType="Project">
+        update project set p_name=#{p_name},p_department_id=#{department.de_id},p_begin=#{p_begin},p_end=#{p_end} where p_id=#{p_id}
+    </update>
+    <select id="queryAllProjects" resultMap="projectMap">
+        select p.p_id,p.p_name,d.de_name,p.p_begin,p.p_end from project p,department d where p.p_department_id=d.de_id order  by p.p_id desc
+    </select>
+    <select id="queryProjectById"  parameterType="int" resultMap="projectMap" >
+        select p.p_id,p.p_name,d.de_name,p.p_begin,p.p_end from project p,department d where p.p_department_id=d.de_id and p.p_id=#{p_id}
+    </select>
+    <select id="queryProjects" resultMap="projectMap" parameterType="String">
+        select p.p_id,p.p_name,d.de_name,p.p_begin,p.p_end from project p,department d
+        <where>
+            p.p_department_id=d.de_id
+            <if test="p_name!=null and p_name !=''">
+                and p.p_name like concat("%",#{p_name},"%")
+            </if>
+        </where>
+        order by p_id desc
+    </select>
+    <delete id="deleteProject" parameterType="int">
+        delete from project where p_id=#{p_id}
+    </delete>
+
+    <delete id="deleteProjectByDe_id" parameterType="int">
+        delete from project where p_department_id = #{p_department_id}
+    </delete>
+</mapper>
+

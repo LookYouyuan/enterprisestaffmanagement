@@ -1,0 +1,29 @@
+server:
+  port: 8080
+spring:
+  freemarker:
+    suffix: .ftlh
+    settings:
+      number_format: 0.##
+    cache: false
+    charset: UTF-8
+    content-type: text/html;charset=utf-8
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/system?characterEncoding=utf-8
+    username: root
+    password: root
+mybatis:
+  mapper-locations: mapper/*.xml
+  type-aliases-package: com.hxc.enterprisestaffmanagement.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  level:
+    com:
+      hxc:
+        enterprisestaffmanagement:
+          mapper: debug
+
+
+
